@@ -9,8 +9,6 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
-# Include the rust-package.mk if available. If not, one might need to adjust this.
-# This assumes the 'rust' feed is installed.
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
 define Package/at-webserver
@@ -25,6 +23,7 @@ define Package/at-webserver/description
   Provides WebSocket interface for AT commands.
 endef
 
+define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) ./src $(PKG_BUILD_DIR)/
 	$(CP) ./files $(PKG_BUILD_DIR)/
@@ -34,10 +33,6 @@ endef
 
 define Package/at-webserver/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	# rust-package.mk installs binary to $(PKG_INSTALL_DIR)/bin, we copy it from there.
-	# Note: Check if rust-package.mk installs to /usr/bin or /bin. Usually it respects Cargo bin output.
-	# We assume the binary name matches the package name or is defined in Cargo.toml.
-	# The Cargo.toml name is "at-webserver".
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/at-webserver $(1)/usr/bin/
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
