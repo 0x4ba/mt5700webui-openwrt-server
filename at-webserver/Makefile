@@ -25,6 +25,13 @@ define Package/at-webserver/description
   Provides WebSocket interface for AT commands.
 endef
 
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./src $(PKG_BUILD_DIR)/
+	$(CP) ./Cargo.toml $(PKG_BUILD_DIR)/
+	$(CP) ./Cargo.lock $(PKG_BUILD_DIR)/
+endef
+
 define Package/at-webserver/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	# rust-package.mk installs binary to $(PKG_INSTALL_DIR)/bin, we copy it from there.
