@@ -42,11 +42,16 @@ define Package/at-webserver/install
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/at-webserver $(1)/etc/init.d/
+
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) ./files/etc/config/at-webserver $(1)/etc/config/
+
+	$(INSTALL_DIR) $(1)/www/5700
+	$(CP) -r ./files/www/5700/* $(1)/www/5700/
 	
-	# Reuse existing config or install new one?
-	# User wanted to replace the python one eventually, but for now we might want a separate config?
-	# User asked to "implement it using Rust", implying replacement.
-	# But to avoid conflict with existing package, we name it at-webserver.
+	$(INSTALL_DIR) $(1)/www/cgi-bin
+	$(INSTALL_BIN) ./files/www/cgi-bin/at-ws-info $(1)/www/cgi-bin/
+	$(INSTALL_BIN) ./files/www/cgi-bin/at-log-clear $(1)/www/cgi-bin/
 endef
 
 $(eval $(call RustBinPackage,at-webserver))
