@@ -40,4 +40,5 @@ pub type CommandSender = mpsc::Sender<(String, oneshot::Sender<ATResponse>)>;
 pub enum ConnectionType {
     Network,
     Serial,
+    Ubus,
 }

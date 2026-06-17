@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::connection::{ATConnection, NetworkATConnection, SerialATConnection};
+use crate::connection::{ATConnection, NetworkATConnection, SerialATConnection, UbusATConnection};
 use crate::handlers::{CallHandler, MemoryFullHandler, MessageHandler, NewSMSHandler};
 use crate::models::{ATResponse, CommandSender, ConnectionType};
 use crate::notifications::NotificationManager;
@@ -78,6 +78,12 @@ impl ATClientActor {
                 Box::new(SerialATConnection::new(
                     self.config.at_config.serial.port.clone(),
                     self.config.at_config.serial.baudrate,
+                ))
+            }
+            ConnectionType::Ubus => {
+                Box::new(UbusATConnection::new(
+                    self.config.at_config.ubus.port.clone(),
+                    self.config.at_config.ubus.timeout,
                 ))
             }
         };
