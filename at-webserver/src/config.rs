@@ -125,6 +125,37 @@ impl Config {
             }
         }
 
+        // Load UCI serial values
+        if let Ok(output) = Command::new("uci").args(&["get", "at-webserver.config.serial_port"]).output() {
+            if output.status.success() {
+                let val = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if val == "custom" {
+                    // 如果 serial_port 是 'custom'，则从 serial_port_custom 读取实际路径
+                    if let Ok(custom) = Command::new("uci").args(&["get", "at-webserver.config.serial_port_custom"]).output() {
+                        if custom.status.success() {
+                            config.at_config.serial.port = String::from_utf8_lossy(&custom.stdout).trim().to_string();
+                        }
+                    }
+                } else if !val.is_empty() {
+                    config.at_config.serial.port = val;
+                }
+            }
+        }
+        if let Ok(output) = Command::new("uci").args(&["get", "at-webserver.config.serial_baudrate"]).output() {
+            if output.status.success() {
+                if let Ok(b) = String::from_utf8_lossy(&output.stdout).trim().parse() {
+                    config.at_config.serial.baudrate = b;
+                }
+            }
+        }
+        if let Ok(output) = Command::new("uci").args(&["get", "at-webserver.config.serial_timeout"]).output() {
+            if output.status.success() {
+                if let Ok(t) = String::from_utf8_lossy(&output.stdout).trim().parse() {
+                    config.at_config.serial.timeout = t;
+                }
+            }
+        }
+
         // 2. Override with Environment Variables
         if let Ok(val) = std::env::var("AT_CONNECTION_TYPE") {
             match val.as_str() {

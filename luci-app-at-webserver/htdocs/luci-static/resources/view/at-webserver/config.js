@@ -66,9 +66,10 @@ return view.extend({
 		// 连接类型
 		o = s.option(form.ListValue, 'connection_type', _('连接类型'),
 			_('选择AT命令的连接方式'));
+		o.value('UBUS', _('UBus 连接 (共享串口)'));
 		o.value('NETWORK', _('网络连接'));
 		o.value('SERIAL', _('串口连接'));
-		o.default = 'NETWORK';
+		o.default = 'UBUS';
 		o.rmempty = false;
 
 		// 网络连接配置
@@ -186,6 +187,19 @@ return view.extend({
 		o.datatype = 'uinteger';
 		o.default = '10';
 		o.depends('connection_type', 'SERIAL');
+
+	// UBus连接配置
+		o = s.option(form.Value, 'ubus_port', _('UBus AT 端口'),
+			_('ubus-at-daemon 管理的 AT 串口设备路径'));
+		o.placeholder = '/dev/ttyUSB2';
+		o.default = '/dev/ttyUSB2';
+		o.depends('connection_type', 'UBUS');
+
+		o = s.option(form.Value, 'ubus_timeout', _('UBus 超时'),
+			_('AT命令超时时间（秒）'));
+		o.datatype = 'uinteger';
+		o.default = '10';
+		o.depends('connection_type', 'UBUS');
 
 	// WebSocket配置
 	o = s.option(form.DummyValue, '_websocket_title', _('WebSocket 配置'));
